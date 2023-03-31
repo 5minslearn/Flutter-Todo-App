@@ -45,6 +45,12 @@ class _TodoListState extends State<TodoList> {
     });
   }
 
+  void _deleteTodo(Todo todo) {
+    setState(() {
+      _todos.removeWhere((element) => element.name == todo.name);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,9 +61,9 @@ class _TodoListState extends State<TodoList> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: _todos.map((Todo todo) {
           return TodoItem(
-            todo: todo,
-            onTodoChanged: _handleTodoChange,
-          );
+              todo: todo,
+              onTodoChanged: _handleTodoChange,
+              removeTodo: _deleteTodo);
         }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
@@ -118,11 +124,15 @@ class Todo {
 }
 
 class TodoItem extends StatelessWidget {
-  TodoItem({required this.todo, required this.onTodoChanged})
+  TodoItem(
+      {required this.todo,
+      required this.onTodoChanged,
+      required this.removeTodo})
       : super(key: ObjectKey(todo));
 
   final Todo todo;
   final void Function(Todo todo) onTodoChanged;
+  final void Function(Todo todo) removeTodo;
 
   TextStyle? _getTextStyle(bool checked) {
     if (!checked) return null;
@@ -158,7 +168,9 @@ class TodoItem extends StatelessWidget {
             color: Colors.red,
           ),
           alignment: Alignment.centerRight,
-          onPressed: () {},
+          onPressed: () {
+            removeTodo(todo);
+          },
         ),
       ]),
     );
