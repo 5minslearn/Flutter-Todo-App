@@ -39,6 +39,12 @@ class _TodoListState extends State<TodoList> {
     _textFieldController.clear();
   }
 
+  void _handleTodoChange(Todo todo) {
+    setState(() {
+      todo.completed = !todo.completed;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +56,7 @@ class _TodoListState extends State<TodoList> {
         children: _todos.map((Todo todo) {
           return TodoItem(
             todo: todo,
+            onTodoChanged: _handleTodoChange,
           );
         }).toList(),
       ),
@@ -111,9 +118,11 @@ class Todo {
 }
 
 class TodoItem extends StatelessWidget {
-  TodoItem({required this.todo}) : super(key: ObjectKey(todo));
+  TodoItem({required this.todo, required this.onTodoChanged})
+      : super(key: ObjectKey(todo));
 
   final Todo todo;
+  final void Function(Todo todo) onTodoChanged;
 
   TextStyle? _getTextStyle(bool checked) {
     if (!checked) return null;
@@ -127,12 +136,16 @@ class TodoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        onTodoChanged(todo);
+      },
       leading: Checkbox(
         checkColor: Colors.greenAccent,
         activeColor: Colors.red,
         value: todo.completed,
-        onChanged: (value) {},
+        onChanged: (value) {
+          onTodoChanged(todo);
+        },
       ),
       title: Row(children: <Widget>[
         Expanded(
