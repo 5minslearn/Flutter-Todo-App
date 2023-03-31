@@ -45,11 +45,13 @@ class _TodoListState extends State<TodoList> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        children: _todos.map((Todo todo) {
+          return TodoItem(
+            todo: todo,
+          );
+        }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _displayDialog(),
@@ -106,4 +108,46 @@ class Todo {
   Todo({required this.name, required this.completed});
   String name;
   bool completed;
+}
+
+class TodoItem extends StatelessWidget {
+  TodoItem({required this.todo}) : super(key: ObjectKey(todo));
+
+  final Todo todo;
+
+  TextStyle? _getTextStyle(bool checked) {
+    if (!checked) return null;
+
+    return const TextStyle(
+      color: Colors.black54,
+      decoration: TextDecoration.lineThrough,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {},
+      leading: Checkbox(
+        checkColor: Colors.greenAccent,
+        activeColor: Colors.red,
+        value: todo.completed,
+        onChanged: (value) {},
+      ),
+      title: Row(children: <Widget>[
+        Expanded(
+          child: Text(todo.name, style: _getTextStyle(todo.completed)),
+        ),
+        IconButton(
+          iconSize: 30,
+          icon: const Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+          alignment: Alignment.centerRight,
+          onPressed: () {},
+        ),
+      ]),
+    );
+  }
 }
